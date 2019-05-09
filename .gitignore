@@ -28,7 +28,7 @@
 *.sql
 *.sqlite
 #*.csv
-data/
+#data/
 crawl1/
 Shapefiles_20-_20JANUARY_202018/
 
