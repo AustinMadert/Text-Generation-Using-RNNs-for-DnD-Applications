@@ -2,7 +2,7 @@
 
 <strong>This project is currently in progress</strong>
 
-My movtivation from this project comes from my experience playing in roleplaying
+My motivation from this project comes from my experience playing in roleplaying
 groups. Dungeons and Dragons (D&D) is a roleplaying game where a small group of players
 will each assume the role of a fantasy character and act out adventures and combat
 with terrible monsters via the medium of spoken word and dice rolls. The monsters
