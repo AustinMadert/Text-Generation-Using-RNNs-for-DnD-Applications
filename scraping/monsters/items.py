@@ -7,7 +7,6 @@
 
 import scrapy
 
-
 class MonsterItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -24,6 +23,22 @@ class MonsterItem(scrapy.Item):
     charisma = scrapy.Field()
     skills = scrapy.Field()
     languages = scrapy.Field()
+    senses = scrapy.Field()
+    saving_throws = scrapy.Field()
+    damage_immunities = scrapy.Field()
+    damage_resistances = scrapy.Field()
+    condition_immunities = scrapy.Field()
+    ability_1 = scrapy.Field()
+    ability_2 = scrapy.Field()
+    ability_3 = scrapy.Field()
+    ability_4 = scrapy.Field()
+    ability_5 = scrapy.Field()
+    ability_6 = scrapy.Field()
+    ability_7 = scrapy.Field()
+    ability_8 = scrapy.Field()
+    ability_9 = scrapy.Field()
+    ability_10 = scrapy.Field()
+    misc = scrapy.Field()
     challenge = scrapy.Field()
     actions = scrapy.Field()
     url = scrapy.Field()
