@@ -24,10 +24,16 @@ novel D&D spells.
 ## What Am I Actually Doing Here?
 
 I will use Python's Scrapy library to acquire all the monster descriptions for the
-latest edition of Dungeons and Dragons. Then I will use the Keras library's LSTM
-paired with ULMFiT to train a network on a Spark EMR cluster. The end product will
-be a model that can create novel monsters for Dungeons and Dragons adventures.
+5th edition (current) of Dungeons and Dragons. Then I will use the Tensorflow and
+Keras libraries to build RNNs, such as LSTMs and GRUs to auto-generate text that
+should closely mimic D&D monsters. The end product will be a model that can create 
+novel monsters for Dungeons and Dragons adventures.
+
+The initial approach will be to generate new monsters with character level models.
+However, I will also plan to test sentence level models that leverage the power
+of transformers.
 
 ## External Links
 
-Coming Soon!
+<a href='https://www.tensorflow.org/beta/tutorials/text/text_generation'>Tensorflow Text Generation with an RNN</a>: a 
+helpful walkthrough on the tensorflow site to accomplish character level text generation.
