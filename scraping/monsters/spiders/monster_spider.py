@@ -37,44 +37,53 @@ class MonsterSpider(scrapy.Spider):
         item['url'] = response.url
         
         # Parsing the actions block of each stat block
-        actions_count = response.xpath('count(//div[@class="section-left"]/p)')
+        actions_count = len(response.xpath('//div[@class="section-left"]/p').getall())
         actions_list = []
         for p_tag in range(actions_count):
             p_tag += 1
             append_string = ''
-            if response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/strong'):
-                append_string += response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/strong/text()').get()
+            ability_name = response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/strong/em[1]/text()').get()
+            if ability_name:
+                append_string += ability_name
+                append_string += ";;"
             else:
                 append_string += "||ADDENDUM||"
+
             append_string += response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/text()').get()
+
+            if ability_name == "Spellcasting.":
+                spell_list = response.xpath('//div[@class="section-left"]/ul/li/p/text()').getall()
+                spells = '++'.join(spell_list)
+                append_string += spells
+                
             actions_list.append(append_string)
 
         try:   
             for num, ability in enumerate(actions_list):
-                item[f'ability_{num}'] = ability
+                item[f'ability_{num + 1}'] = ability
         except:
             item['misc'] = reduce(lambda x, y: x + y, actions_list)
 
         # Parsing the specifics block of each stat block
-        specs_heads = response.xpath('//div[@class=property-line"]/h4/text()').getall()
+        specs_heads = response.xpath('//div[@class="property-line"]/h4/text()').getall()
         specs = response.xpath('//div[@class="property-line"]/p/text()').getall()
         mesh = zip(specs_heads, specs)
 
         for head, element in mesh:
             if head == 'Hit Points':
-                item['hit_points'] == element
+                item['hit_points'] = element
             elif head == 'Damage Immunities':
-                item['damage_immunities'] == element
+                item['damage_immunities'] = element
             elif head == 'Damage Resistances':
-                item['damage_resistances'] == element
+                item['damage_resistances'] = element
             elif head == 'Condition Immunities':
-                item['condition_immunities'] == element
+                item['condition_immunities'] = element
             elif head == 'Senses':
-                item['senses'] == element
+                item['senses'] = element
             elif head == 'Languages':
-                item['languages'] == element
-            if head == 'Challenge':
-                item['challenge'] == element
+                item['languages'] = element
+            elif head == 'Challenge':
+                item['challenge'] = element
         
         yield item
 
