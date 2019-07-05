@@ -17,6 +17,7 @@ class MonsterSpider(scrapy.Spider):
 
         names = response.xpath('//a[@class="post-link"]/text()').getall()
         links = [response.url + 'creature/' + str(i).lower() for i in names]
+        links = [url.replace(' ', '-').replace('(', '').replace(')','') for url in links]
         for url in links:
             yield scrapy.Request(url, callback=self.parse_statblock)
 
@@ -44,10 +45,13 @@ class MonsterSpider(scrapy.Spider):
             append_string = ''
             ability_name = response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/strong/em[1]/text()').get()
             if ability_name:
+                append_string += "paragraph="
+                append_string += str(p_tag)
                 append_string += ability_name
                 append_string += ";;"
             else:
-                append_string += "||ADDENDUM||"
+                append_string += "paragraph="
+                append_string += str(p_tag)
 
             append_string += response.xpath(f'//div[@class="section-left"]/p[{p_tag}]/text()').get()
 
@@ -84,6 +88,10 @@ class MonsterSpider(scrapy.Spider):
                 item['languages'] = element
             elif head == 'Challenge':
                 item['challenge'] = element
+            elif head == 'Saving Throws':
+                item['saving_throws'] = element
+            elif head == 'Skills':
+                item['skills'] = element
         
         yield item
 
