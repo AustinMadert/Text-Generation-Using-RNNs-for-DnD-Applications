@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!pip install tensorflow-gpu==2.0.0-beta1
+!pip install tensorflow-gpu==2.0.0-beta1
 import tensorflow as tf
 import numpy as np
 import os
