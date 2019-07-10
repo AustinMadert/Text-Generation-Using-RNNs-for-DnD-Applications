@@ -24,22 +24,25 @@ class Keras_Text_Generator(object):
         '''
         Opens and reads text file. Returns string.
         '''
+
         with open(filename, 'r') as f:
             data = f.read()
 
         return data
 
 
-    def _vectorize_text(self, data_string):
+    def _vectorize_text(self):
         '''
         Creates indexes to transform characters to integers representation and back.
         Transforms text string into integer representation.
         '''
+
+        # Create character to number (and vice versa) lookups
         self.char2idx = {j:i for i, j in enumerate(self.vocab)}
         self.idx2char = np.array(self.vocab)
 
         # Transform text string into integer representation
-        self.text_as_int = np.array([self.char2idx[char] for char in data_string])
+        self.text_as_int = np.array([self.char2idx[char] for char in self.text_string])
 
         return None
 
@@ -48,10 +51,28 @@ class Keras_Text_Generator(object):
         '''
         Takes a string and creates an input string and target string.
         '''
+
         input_text = chunk[:-1]
         target_text = chunk[1:]
 
         return input_text, target_text
+
+
+    def _create_rolling_sequences(self):
+        '''
+        Takes text_string and creates seq_length training vectors by incrementing 
+        through the text_string one character at a time.
+        '''
+
+        dataX = []
+        dataY = []
+        for i in range(0, self.length_of_data - self.seq_length):
+            seq_in = self.text_string[i:i + self.seq_length]
+            seq_out = self.text_string[i + 1:i + self.seq_length + 1]
+            dataX.append([self.char2idx[char] for char in seq_in])
+            dataY.append([self.char2idx[char] for char in seq_out])
+        
+        return (dataX, dataY)
 
 
     def _create_dataset(self):
@@ -59,24 +80,33 @@ class Keras_Text_Generator(object):
         training instances of desired length and concatenates them into a dataset.        
         
         Arguments:
-            length_of_data {[int]} -- actual length of text data string
-            seq_length {[int]} -- desired length of training instances
+            None
         
         Returns:
             None
         """
+        # Adjust dataset_generator_input based on data generation technique
+        if self.rolling_sequences:
+            dataset_generator_input = self._create_rolling_sequences()
+        else:
+            dataset_generator_input = self.text_as_int
+
         # Create a tensorflow Dataset object 
-        char_dataset = tf.data.Dataset.from_tensor_slices(self.text_as_int)
+        char_dataset = tf.data.Dataset.from_tensor_slices(dataset_generator_input)
+
         # Use batch method to create training instances of desired size
         sequences = char_dataset.batch(self.seq_length + 1, drop_remainder=True)
+
         # Create training instances and labels
         dataset = sequences.map(self._split_input_target)
-        self.dataset = dataset.shuffle(self.buffer_size).batch(self.batch_size, drop_remainder=True)
+        self.dataset = dataset.shuffle(self.buffer_size,
+                        reshuffle_each_iteration=True).batch(self.batch_size, 
+                        drop_remainder=True)
 
-        return None
+        return char_dataset
 
 
-    def load_and_create_dataset(self, filename, seq_length=100):
+    def load_and_create_dataset(self, filename, seq_length=100, rolling_sequences=True):
         """Method designed to load a text file and create a training dataset. Data
         are loaded, then vectorized, and finally, the data is batched into training
         instances.
@@ -90,21 +120,23 @@ class Keras_Text_Generator(object):
         Returns:
             None
         """
-        # Store seq_length for later use
-        self.seq_length = seq_length
 
         # Load the data
-        data_string = self._load_data(filename)
-        self.length_of_data = len(data_string)
+        self.text_string = self._load_data(filename)
+
+        # Store for later use
+        self.seq_length = seq_length
+        self.length_of_data = len(self.text_string)
+        self.rolling_sequences = rolling_sequences
 
         # Create model character vocabulary
-        self.vocab = sorted(set(data_string))
+        self.vocab = sorted(set(self.text_string))
         self.vocab_size = len(self.vocab)
 
         print(f'Length of text: {self.length_of_data} characters')
         print(f'Unique characters: {self.vocab_size}')
 
-        self._vectorize_text(data_string)
+        self._vectorize_text()
         self._create_dataset()
 
         print('Dataset successfully created.')
@@ -145,8 +177,14 @@ class Keras_Text_Generator(object):
         '''
         Take number of epochs and fits model using class dataset and checkpoints.
         '''
-        steps_per_epoch = (self.length_of_data - self.seq_length)//self.batch_size
 
+        # Adjust steps_per_epoch input based on data generation technique used
+        if self.rolling_sequences:
+            steps_per_epoch = (self.length_of_data - self.seq_length) // self.batch_size
+        else:
+            steps_per_epoch = (self.length_of_data / self.seq_length) // self.batch_size
+
+        # Train the model
         history = self.model.fit(self.dataset, epochs=epochs,\
             callbacks=[self.checkpoint_callback], steps_per_epoch=steps_per_epoch)
 
@@ -160,6 +198,7 @@ class Keras_Text_Generator(object):
         Loads model weights from existing checkpoint. Class model needs to have
         same architecture as the trained model.
         '''
+
         self.model.load_weights(tf.train.latest_checkpoint(self.checkpoint_dir))
         self.model.build(tf.TensorShape([1, None]))
         self.model.summary()

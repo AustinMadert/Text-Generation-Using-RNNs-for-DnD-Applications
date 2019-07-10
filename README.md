@@ -9,7 +9,7 @@ The dataset used to train the models is the entire set of monster characters fro
 Dungeons and Dragons 5th edition. The characters were transformed into text and 
 all where concatenated, then batched in order to make over a million data points
 for training. A wrapper class was created for ease of workflow and iteration
-during training, and it<a href='Models/textGen.py'>can be accessed here.</a>
+during training, and it <a href='Models/textGen.py'>can be accessed here.</a>
 
 A jupyter notebook that will showcase the workflow using the text generators is
 currently underconstruction, but will be uploaded soon.
