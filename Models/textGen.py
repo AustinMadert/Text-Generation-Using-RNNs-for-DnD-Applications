@@ -85,25 +85,20 @@ class Keras_Text_Generator(object):
         Returns:
             None
         """
-        # Adjust dataset_generator_input based on data generation technique
+
+        # Comments needed
         if self.rolling_sequences:
-            dataset_generator_input = self._create_rolling_sequences()
+            rolling_dataset = tf.data.Dataset.from_tensor_slices(self._create_rolling_sequences())
+            self.dataset = rolling_dataset.shuffle(self.buffer_size).batch(self.batch_size, 
+                        drop_remainder=True)
         else:
-            dataset_generator_input = self.text_as_int
-
-        # Create a tensorflow Dataset object 
-        char_dataset = tf.data.Dataset.from_tensor_slices(dataset_generator_input)
-
-        # Use batch method to create training instances of desired size
-        sequences = char_dataset.batch(self.seq_length + 1, drop_remainder=True)
-
-        # Create training instances and labels
-        dataset = sequences.map(self._split_input_target)
-        self.dataset = dataset.shuffle(self.buffer_size,
-                        reshuffle_each_iteration=True).batch(self.batch_size, 
+            char_dataset = tf.data.Dataset.from_tensor_slices(self.text_as_int)
+            sequences = char_dataset.batch(self.seq_length + 1, drop_remainder=True)
+            dataset = sequences.map(self._split_input_target)
+            self.dataset = dataset.shuffle(self.buffer_size).batch(self.batch_size, 
                         drop_remainder=True)
 
-        return char_dataset
+        return None
 
 
     def load_and_create_dataset(self, filename, seq_length=100, rolling_sequences=True):
@@ -226,12 +221,12 @@ class Keras_Text_Generator(object):
         text_generated = []
         
         self.model.reset_states()
-        for i in range(num_generate):
+        for _ in range(num_generate):
             predictions = self.model(input_eval)
             predictions = tf.squeeze(predictions, 0)
             
             predictions = predictions/temperature
-            predicted_id = tf.random.categorical(predictions, num_samples=1)[-1,0].numpy()
+            predicted_id = tf.random.categorical(predictions, num_samples=1)[-1,0]
             
             input_eval = tf.expand_dims([predicted_id], 0)
             
