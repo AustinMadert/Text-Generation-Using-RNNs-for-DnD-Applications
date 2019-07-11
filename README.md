@@ -49,7 +49,7 @@ form of integer attributes as well as text descriptions. For example, here is th
 statblock for a Mind Flayer (fans of the Netflix show Stranger Things will be 
 familiar!)
 
-<img src='imgs/mind_flayer'>
+<img src='imgs/mind_flayer.png'>
 
 As you can see, the statblock has a relatively varied structure with many different
 norms for how characters are used. The initial approach taken in this project was
