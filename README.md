@@ -16,7 +16,9 @@ currently underconstruction, but will be uploaded soon.
 
 As you may have guessed, my own interest and experience in roleplaying games is 
 the inspiration behind this project, besides my desire to use deep learning for
-natural language processing and data science. 
+natural language processing and data science. That makes this a bit of a passion
+project, however I will argue that passion projects are some of the best to get
+your hands dirty and your head wrapped around a difficult concept!
 
 I would be remiss in not saying that the initial inspiration for this project 
 came from
@@ -25,7 +27,7 @@ an aiweirdness.com post</a> on using neural networks to generate the names for
 novel D&D spells. They were on to something, and this work is an effort to extend
 their insight.
 
-## What Am I Actually Doing Here?
+## Methods and Tools
 
 Python's Scrapy library was used to acquire all the monster descriptions for the
 5th edition (current) of Dungeons and Dragons. <a href='scraping/monsters'>You can access that spider here.</a> 
@@ -37,6 +39,25 @@ novel monsters for Dungeons and Dragons adventures.
 The initial approach has been to generate new monsters using models that generate
 text descriptions one ASCII character at a time. However, I will also plan to 
 test sentence level models and potentially even use transformers.
+
+## Analysis
+
+The typical Dungeons and Dragons monster has a detailed description of both what
+it is and what it is capable of doing within the game. This description is known
+as a statblock. Each statblock entails the statistics that the monster has in the
+form of integer attributes as well as text descriptions. For example, here is the
+statblock for a Mind Flayer (fans of the Netflix show Stranger Things will be 
+familiar!)
+
+<img src='imgs/mind_flayer'>
+
+As you can see, the statblock has a relatively varied structure with many different
+norms for how characters are used. The initial approach taken in this project was
+to take the information from each statblock and create a representative text string
+and use that as training data for a recurrent neural network model. The hope being
+that the latent structure of D&D statblocks across all monsters would be enough 
+to train a model to generalize and create new statblocks that made sense.
+
 
 ## External Links
 
