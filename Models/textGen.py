@@ -17,8 +17,7 @@ class Keras_Text_Generator(object):
         self.checkpoint_dir = checkpoint_dir
         checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt_{epoch}")
         self.checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
-            filepath=checkpoint_prefix,
-            save_best_only=True)
+            filepath=checkpoint_prefix)
 
 
     def _load_data(self, filename):
