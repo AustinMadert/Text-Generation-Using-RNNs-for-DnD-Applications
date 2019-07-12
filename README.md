@@ -63,3 +63,7 @@ to train a model to generalize and create new statblocks that made sense.
 
 <a href='https://www.tensorflow.org/beta/tutorials/text/text_generation'>Tensorflow Text Generation with an RNN</a>: a 
 helpful walkthrough on the tensorflow site to accomplish character level text generation.
+
+<a href='http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf'>Scholarly Article on Glorot Initialization</a>: 
+an article that does an amazing job of laying out the glorot uniform equation and
+why it helps neural networks learn.
