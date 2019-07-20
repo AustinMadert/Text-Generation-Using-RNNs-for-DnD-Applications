@@ -67,3 +67,7 @@ helpful walkthrough on the tensorflow site to accomplish character level text ge
 <a href='http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf'>Scholarly Article on Glorot Initialization</a>: 
 an article that does an amazing job of laying out the glorot uniform equation and
 why it helps neural networks learn.
+
+<a href='https://distill.pub/2019/memorization-in-rnns/'>Differences in RNN Memorization</a>:
+an article that does a fantastic job of visualizing how different memory units 
+will focus on different parts of text sequences.

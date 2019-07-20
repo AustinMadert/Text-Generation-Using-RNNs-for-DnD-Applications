@@ -4,6 +4,7 @@ import subprocess
 import tensorflow as tf
 import numpy as np
 import os
+import pickle
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 class Keras_Text_Generator(object):
@@ -17,7 +18,8 @@ class Keras_Text_Generator(object):
         self.checkpoint_dir = checkpoint_dir
         checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt_{epoch}")
         self.checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
-            filepath=checkpoint_prefix)
+            filepath=checkpoint_prefix,
+            save_weights_only=True)
 
 
     def _load_data(self, filename):
@@ -58,17 +60,27 @@ class Keras_Text_Generator(object):
         return input_text, target_text
 
 
-    def _create_rolling_sequences(self):
+    def _create_rolling_sequences(self, pickle_data=True):
         '''
         Takes text_string and creates seq_length sized training vectors by 
         incrementing through the text_string one character at a time.
         '''
 
+        # Use pickling flag to determine whether to load from previously created
+        # sequences
+        if self.from_pickle:
+            with open('rolling_sequences.data', 'rb') as f:
+                result = pickle.load(f)
+            
+            return result
+
+
         dataX = []
         dataY = []
 
         # Iterate through full dataset
-        for i in range(0, self.length_of_data - self.seq_length):
+        for i in range(0, self.length_of_data - self.seq_length,
+                        self.rolling_sequences_step):
 
             # Create segments of text that are seq_length long
             seq_in = self.text_string[i:i + self.seq_length]
@@ -79,6 +91,11 @@ class Keras_Text_Generator(object):
             # Add the inputs and outputs to lists as vector representations
             dataX.append([self.char2idx[char] for char in seq_in])
             dataY.append([self.char2idx[char] for char in seq_out])
+
+        # Use flag to determine whether to save data sequences or not
+        if pickle_data:
+            with open('rolling_sequences.data', 'wb') as f:
+                pickle.dump((dataX, dataY), f)
         
         return (dataX, dataY)
 
@@ -113,16 +130,20 @@ class Keras_Text_Generator(object):
         return None
 
 
-    def load_and_create_dataset(self, filename, seq_length=100, rolling_sequences=True):
+    def load_and_create_dataset(self, filename, seq_length=100, 
+            rolling_sequences=True, rolling_sequences_step=1, from_pickle=False):
         """Method designed to load a text file and create a training dataset. Data
         are loaded, then vectorized, and finally, the data is batched into training
         instances.
         
         Arguments:
-            filename {string} -- location of text file
+            filename {str} -- full path and filename of data string.
         
         Keyword Arguments:
-            seq_length {int} -- desired length of training instances (default: {100})
+            seq_length {int} -- number of characters per training instance (default: {100})
+            rolling_sequences {bool} -- flag used to determine data construction method (default: {True})
+            rolling_sequences_step {int} -- if rolling_sequences, then the stride length to use (default: {1})
+            from_pickle {bool} -- flag used to load previously created dataset (default: {False})
         
         Returns:
             None
@@ -135,6 +156,8 @@ class Keras_Text_Generator(object):
         self.seq_length = seq_length
         self.length_of_data = len(self.text_string)
         self.rolling_sequences = rolling_sequences
+        self.from_pickle=from_pickle
+        self.rolling_sequences_step=rolling_sequences_step
 
         # Create model character vocabulary
         self.vocab = sorted(set(self.text_string))
