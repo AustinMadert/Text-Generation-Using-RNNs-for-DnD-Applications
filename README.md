@@ -11,8 +11,8 @@ all where concatenated, then batched in order to make over a million data points
 for training. A wrapper class was created for ease of workflow and iteration
 during training, and it <a href='Models/textGen.py'>can be accessed here.</a>
 
-A jupyter notebook that will showcase the workflow using the text generators is
-currently underconstruction, but will be uploaded soon.
+A jupyter notebook that walks through using the textGen module for data processing,
+model fitting, and text generation <a href='textGen_Keras_Generator.ipynb'>can be found here in this repository.</a>
 
 As you may have guessed, my own interest and experience in roleplaying games is 
 the inspiration behind this project, besides my desire to use deep learning for
