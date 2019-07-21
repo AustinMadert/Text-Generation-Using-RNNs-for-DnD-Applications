@@ -56,8 +56,13 @@ norms for how characters are used. The initial approach taken in this project wa
 to take the information from each statblock and create a representative text string
 and use that as training data for a recurrent neural network model. The hope being
 that the latent structure of D&D statblocks across all monsters would be enough 
-to train a model to generalize and create new statblocks that made sense.
+to train a model to generalize and create new statblocks that made sense. However,
+testing showed that some characters, such as the colon, create ambiguity for the 
+RNN and disrupts the sequence of characters. So special characters were inplanted
+into the text string to help inject some structure. Here's how the Mind Flayer 
+looks in text form:
 
+<img src='imgs/mind_flayer_text_structured.png'>
 
 ## External Links
 
