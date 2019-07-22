@@ -64,6 +64,25 @@ looks in text form:
 
 <img src='imgs/mind_flayer_text_structured.png'>
 
+This text representation was generated for over 600 monster in the 5th edition
+bestiary. Training instances were created by iterating over the text string and 
+creating chunks of text with the corresponding following character for the RNN to
+predict and train on. 
+
+<img src='imgs/training.png'>
+
+Once training was completed, text was generated using the Keras_Text_Generator
+object to suprisingly strong results:
+
+<img src='imgs/predicted.png'>
+
+## Final Thoughts
+
+We got some truly fantastic results. The RNNs were able to very closely mimic the 
+strange syntax of a D&D statblock. It was even able to accomplish dice math with
+ a relatively high degree of reliability when determining statistics like hit points.
+ And did so without any mathematical formulas!
+
 ## External Links
 
 <a href='https://www.tensorflow.org/beta/tutorials/text/text_generation'>Tensorflow Text Generation with an RNN</a>: a 
